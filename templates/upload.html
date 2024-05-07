@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Upload Page</title>
+</head>
+<body>
+    <h1>Upload html file</h1>
+    <form action="/process"
+    method="post" enctype="multipart/form-data"><input type="file" name="file" accept=".html">
+<input type="submit" value="Generate Table"></form>
+
+<form action="/download"
+    method="post" enctype="multipart/form-data"><input type="file" name="file2" accept=".html">
+<input type="submit" value="Generate CSV"></form>
+    
+</body>
+</html>
