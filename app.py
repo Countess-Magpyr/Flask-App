@@ -7,7 +7,7 @@
 #v4 Building final structure 
 #v5 Revamp to look at study review page (data much easier to sort, copied from the body of the html)
 #Environment: Python 3
-#Packages: flask, beautifulsoup, pandas and tabulate
+#Packages: flask, beautifulsoup, pandas, tabulate, io
 from flask import Flask, render_template, request, Response
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -51,7 +51,9 @@ def process():
 
     namedf=pd.DataFrame(varNameData, columns=['Field Name', 'Variable Name'])
 
-    print(namedf)
+    nameddf1=namedf[['Field Name']]
+
+    print(nameddf1)
 
 
 
@@ -71,7 +73,9 @@ def process():
 
     formdf=pd.DataFrame(formNameData, columns=['Form', 'Form_Name'])
 
-    print(formdf)
+    formddf1=formdf[['Form']]
+
+    print(formddf1)
 
 ###################################################################################################
 ## Grab Event names (dd and dt)
@@ -95,8 +99,35 @@ def process():
 
 #################################################################################################
 
-    merged_df=pd.merge(pd.merge(namedf, eventdf, left_index=True, right_index=True), formdf, left_index=True, right_index=True)
+    merged_df=pd.merge(pd.merge(formddf1, eventdf, left_index=True, right_index=True), nameddf1, left_index=True, right_index=True)
 
+    grouped= merged_df.groupby(['Form'])
+
+   # category_groups = {k: v for k, v in merged_df.groupby('Form')}
+
+    #for category, group_df in category_groups.items():print (f"DataFrame for Category {category}:\n{group_df}\n")
+
+    #data_sums={k: v['Event'].sum()
+            #   for k, v in category_groups.items()}
+   # print(data_sums)
+
+    html_tables={}
+    for(form), data_group in grouped:html_tables[(form)]=data_group.to_html(index=False) 
+
+    tables_list=[]
+
+    for(form), table in html_tables.items():tables_list.append({"Form":form, "table":table})
+        
+
+
+    #for form in category_groups.items():html_tables[category]=group_df.to_html()
+
+   # table_data2=group_df.values.tolist()
+   # headers2=group_df.columns.tolist()
+
+# table_str2=tabulate(table_data2, headers=headers2, tablefmt='html')
+  #  print(table_str2)
+    
 #merged_df.to_csv('merged_data.csv', index=False)
 
     table_data=merged_df.values.tolist()
@@ -106,7 +137,7 @@ def process():
     print(table_str)
 
 
-    return render_template('result.html', result_table=table_str, contents=contents)
+    return render_template('result.html', table=tables_list)
 
 
 @app.route('/download', methods=['GET','POST'])
@@ -137,7 +168,11 @@ def download():
 
     namedf2=pd.DataFrame(varNameData, columns=['Field Name', 'Variable Name'])
 
-    print(namedf2)
+    
+    nameddf2=namedf2[['Field Name']]
+
+    print(nameddf2)
+
 
 
 
@@ -157,7 +192,11 @@ def download():
 
     formdf2=pd.DataFrame(formNameData, columns=['Form', 'Form_Name'])
 
-    print(formdf2)
+    formddf2=formdf2[['Form']]
+
+
+
+    print(formddf2)
 
 ###################################################################################################
 ## Grab Event names (dd and dt)
@@ -179,7 +218,8 @@ def download():
     print(eventdf2)
 
 
-    df2=pd.merge(pd.merge(namedf2, eventdf2, left_index=True, right_index=True), formdf2, left_index=True, right_index=True)  
+    df2=pd.merge(pd.merge(formddf2, eventdf2, left_index=True, right_index=True), nameddf2, left_index=True, right_index=True)
+ 
 
     output=StringIO()
     df2.to_csv(output, index=False)
@@ -189,7 +229,7 @@ def download():
     
 
 if __name__ =='__main__': 
-    app.run(debug=True)
+    app.run(host='0.0.0.0')
 
 
 
