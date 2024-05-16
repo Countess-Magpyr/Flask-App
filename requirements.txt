@@ -1,5 +1,1 @@
-pip install bs4
-pip install flask
-pip install pandas
-pip install tabulate
-pip install pyexcel
+pip install bs4 flask pandas tabulate pyexcel
