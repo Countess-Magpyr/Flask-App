@@ -13,7 +13,7 @@ from bs4 import BeautifulSoup
 import pandas as pd
 from tabulate import tabulate
 from io import StringIO
-import pyexcel as pe
+
 
 
 app = Flask(__name__,
